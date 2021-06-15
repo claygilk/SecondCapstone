@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectOrganizer.Models;
+using ProjectOrganizer.DAL;
 
 namespace ProjectOrganizerTests
 {
     [TestClass]
-    class EmployeeSqlDAOTests
+    class EmployeeSqlDAOTests : UnitTestBase
     {
         [TestMethod]
         public void GetAllEmployees_ReturnsAllEmployees()

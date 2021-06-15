@@ -9,7 +9,7 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlGetDepartment = "SELECT * FROM department;";
+        private const string SqlGetDepartment = "SELECT * FROM department ORDER BY department_id;";
         private const string SqlCreateDepartment = "INSERT INTO department (name) VALUES (@department_name); SELECT @@IDENTITY;";
         private const string SqlUpdateDepartment = "UPDATE department SET name = @newName WHERE department_id = @departmentId;";
 
