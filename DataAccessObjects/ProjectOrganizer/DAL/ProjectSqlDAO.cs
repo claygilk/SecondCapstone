@@ -8,6 +8,10 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
+        private const string SqlGetAllProjects = "Select * From project;";
+        private const string SqlAssignEmployee = "Insert Into project_employee(project_id, employee_id) Values(@projectId, @employeeId);";
+        private const string SqlRemoveEmployee = "Delete From project_employee Where employee_id = @employeeId;";
+        private const string SqlCreateProject = "Insert Into project(name, from_date, to_date) Values(@projectName, @startDate, @endDate);";
         // Single Parameter Constructor
         public ProjectSqlDAO(string dbConnectionString)
         {

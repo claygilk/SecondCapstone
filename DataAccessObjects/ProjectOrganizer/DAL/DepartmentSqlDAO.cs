@@ -8,6 +8,10 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
+        private const string SqlGetDepartment = "Select * FROM department;";
+        private const string SqlCreateDepartment = "Insert Into department (name) VALUES @department_name;";
+        private const string SqlUpdateDepartment = "Update department set (name) = @newName where name = @oldName;";
+
         // Single Parameter Constructor
         public DepartmentSqlDAO(string dbConnectionString)
         {
