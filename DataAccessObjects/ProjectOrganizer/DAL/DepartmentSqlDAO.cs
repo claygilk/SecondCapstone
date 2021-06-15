@@ -9,9 +9,9 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlGetDepartment = "Select * FROM department;";
+        private const string SqlGetDepartment = "SELECT * FROM department;";
         private const string SqlCreateDepartment = "INSERT INTO department (name) VALUES (@department_name); SELECT @@IDENTITY;";
-        private const string SqlUpdateDepartment = "Update department set name = @newName where department_id = @departmentId;";
+        private const string SqlUpdateDepartment = "UPDATE department SET name = @newName WHERE department_id = @departmentId;";
 
         // Single Parameter Constructor
         public DepartmentSqlDAO(string dbConnectionString)
@@ -22,7 +22,7 @@ namespace ProjectOrganizer.DAL
         /// <summary>
         /// Returns a list of all of the departments.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns a List of Department objects</returns>
         public ICollection<Department> GetDepartments()
         {
             List<Department> departments = new List<Department>();
@@ -45,13 +45,12 @@ namespace ProjectOrganizer.DAL
                         dept.Name = Convert.ToString(reader["name"]);
 
                         departments.Add(dept);
-
                     }
                 }
             }
-            catch (SqlException)
+            catch (SqlException ex)
             {
-                Console.WriteLine("No departments found");
+                Console.WriteLine("No departments found: " + ex.Message);
             }
 
             return departments;
@@ -75,14 +74,13 @@ namespace ProjectOrganizer.DAL
                     command.Parameters.AddWithValue("@department_name", newDepartment.Name);
 
                     newDepartment.Id = Convert.ToInt32(command.ExecuteScalar());
-
                 }
             }
-            catch (SqlException e)
+            catch (SqlException ex)
             {
-                Console.WriteLine("Couldn't create department");
+                Console.WriteLine("Couldn't create department: " + ex.Message);
             }
-            
+
             return newDepartment.Id;
         }
 
@@ -109,13 +107,12 @@ namespace ProjectOrganizer.DAL
 
                 return true;
             }
-            catch (SqlException)
+            catch (SqlException ex)
             {
-                Console.WriteLine("Could not update department");
+                Console.WriteLine("Could not update department: " + ex.Message);
             }
 
             return false;
         }
-
     }
 }

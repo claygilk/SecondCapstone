@@ -9,32 +9,29 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlGetAllEmployees = "Select * From employee;";
-        private const string SqlSearchEmployee = "Select * From employee Where firstname Like '%@firstname%' AND lastname Like '%@lastname%';";
-        private const string SqlGetEmployeeWithoutProject = "Select * FROM employee left join project_employee e ON project p.employee_id = e.employee_id Where project_id IS NULL;";
+        private const string SqlGetAllEmployees = "Select * FROM employee;";
+        private const string SqlSearchEmployee = "Select * FROM employee WHERE first_name LIKE @firstname AND last_name LIKE @lastname;";
+        private const string SqlGetEmployeeWithoutProject = "SELECT * FROM employee e LEFT JOIN project_employee P ON p.employee_id = e.employee_id WHERE project_id IS NULL;";
+        
         // Single Parameter Constructor
         public EmployeeSqlDAO(string dbConnectionString)
         {
             connectionString = dbConnectionString;
         }
 
-        /// <summary>
-        /// Returns a list of all of the employees.
-        /// </summary>
-        /// <returns>A list of all employees.</returns>
-        public ICollection<Employee> GetAllEmployees()
+        public List<Employee> SelectFromEmployee(string sqlStatement)
         {
             List<Employee> employees = new List<Employee>();
-            try 
+            try
             {
-                using (SqlConnection conn = new SqlConnection(this.connectionString)) 
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
-                    SqlCommand command = new SqlCommand(SqlGetAllEmployees, conn);
+                    SqlCommand command = new SqlCommand(sqlStatement, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
 
-                    while (reader.Read()) 
+                    while (reader.Read())
                     {
                         Employee employee = new Employee();
                         employee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
@@ -50,11 +47,19 @@ namespace ProjectOrganizer.DAL
 
 
             }
-            catch(SqlException ex) 
+            catch (SqlException ex)
             {
-                Console.WriteLine("Could not get emploees");
+                Console.WriteLine("Could not find employees: " + ex.Message);
             }
             return employees;
+        }
+        /// <summary>
+        /// Returns a list of all of the employees.
+        /// </summary>
+        /// <returns>A list of all employees.</returns>
+        public ICollection<Employee> GetAllEmployees()
+        {
+            return SelectFromEmployee(SqlGetAllEmployees);
         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
         /// <summary>
@@ -77,6 +82,9 @@ namespace ProjectOrganizer.DAL
 
                     SqlCommand command = new SqlCommand(SqlSearchEmployee, conn);
 
+                    command.Parameters.AddWithValue("@firstname", firstname);
+                    command.Parameters.AddWithValue("@lastname", lastname);
+
                     SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read()) 
@@ -98,7 +106,7 @@ namespace ProjectOrganizer.DAL
             }
             catch (SqlException ex) 
             {
-                Console.WriteLine("could not find employee by that name");
+                Console.WriteLine("Could not find employees: " + ex.Message);
             }
             return employees;
         }   
@@ -109,38 +117,7 @@ namespace ProjectOrganizer.DAL
         /// <returns></returns>
         public ICollection<Employee> GetEmployeesWithoutProjects()
         {
-            List<Employee> employees = new List<Employee>();
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(this.connectionString))
-                {
-                    conn.Open();
-                    SqlCommand command = new SqlCommand(SqlGetEmployeeWithoutProject, conn);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        Employee employee = new Employee();
-                        employee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
-                        employee.DepartmentId = Convert.ToInt32(reader["department_id"]);
-                        employee.FirstName = Convert.ToString(reader["first_name"]);
-                        employee.LastName = Convert.ToString(reader["last_name"]);
-                        employee.JobTitle = Convert.ToString(reader["job_title"]);
-                        employee.HireDate = Convert.ToDateTime(reader["hire_date"]);
-
-                        employees.Add(employee);
-                    }
-                }
-
-
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Could not get emploees");
-            }
-            return employees;
+            return SelectFromEmployee(SqlGetEmployeeWithoutProject);
         }
 
     }
