@@ -1,4 +1,10 @@
-﻿-- restart autoincrement
+﻿USE master;
+GO
+
+USE EmployeeDB; 
+GO
+
+-- restart autoincrement
 DBCC CHECKIDENT (project, RESEED, 0)
 DBCC CHECKIDENT (department, RESEED, 0)
 DBCC CHECKIDENT (employee, RESEED, 0)

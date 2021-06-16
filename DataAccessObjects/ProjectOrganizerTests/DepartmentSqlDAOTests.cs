@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace ProjectOrganizerTests
 {
@@ -12,14 +13,34 @@ namespace ProjectOrganizerTests
     public class DepartmentSqlDAOTests : UnitTestBase
     {
         [TestMethod]
+        [ExpectedException(typeof(SqlException))]
+        public void CreateDepartments_ThrowsException_WhenDeptAlreadyExists()
+        {
+            // Arrange
+            DepartmentSqlDAO dao = new DepartmentSqlDAO(this.ConnectionString);
+            dao.InTestMode = true;
+
+            Department dept = new Department();
+            dept.Name = "Network Test Administration"; 
+
+            // Act
+            dao.CreateDepartment(dept);
+
+            // Assert
+            Assert.Fail("Expected a SQL exception to be thrown.");
+        }
+
+        [TestMethod]
         public void GetDepartments_ReturnsAllDepartments()
         {
             // Arrange
             DepartmentSqlDAO dao = new DepartmentSqlDAO(this.ConnectionString);
+            
             // Act
             ICollection<Department> actual =  dao.GetDepartments();
 
             int expectedCount = this.GetRowCount("department");
+           
             // Assert
             Assert.AreEqual(expectedCount, actual.Count);
 
@@ -52,8 +73,7 @@ namespace ProjectOrganizerTests
             DepartmentSqlDAO dao = new DepartmentSqlDAO(this.ConnectionString);
 
             List<Department> depts = dao.GetDepartments().ToList();
-
-            depts[0].Name = "Test new name";
+            
             // Act
 
             bool success = dao.UpdateDepartment(depts[0]);
