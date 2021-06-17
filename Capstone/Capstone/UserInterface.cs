@@ -37,36 +37,32 @@ namespace Capstone
         }
 
         // Methods
-
-
-        public void Run()
-        {
-            while (true)
-            {
-                MainMenu();
-            }
-        }
-
         public void MainMenu()
         {
-            // Asks user to select from two options:
-            Console.WriteLine("What would you like to do?");
-            Console.WriteLine("1) List Venues");
-            Console.WriteLine("Q) Quit");
+            bool keepRunning = true;
 
-            string choice = Console.ReadLine();
-
-            switch (choice.ToLower())
+            while (keepRunning)
             {
-                // 1. list all venues
-                case "1":
-                    ViewVenue();
-                    break;
+                // Asks user to select from two options:
+                Console.WriteLine("What would you like to do?");
+                Console.WriteLine("1) List Venues");
+                Console.WriteLine("Q) Quit");
 
-                // 2. quit the program
-                case "q":
-                    Console.WriteLine("Thank you for booking with Excelsior Venues!");
-                    return;
+                string choice = Console.ReadLine();
+
+                switch (choice.ToLower())
+                {
+                    // 1. list all venues
+                    case "1":
+                        ViewVenue();
+                        break;
+
+                    // 2. quit the program
+                    case "q":
+                        Console.WriteLine("Thank you for booking with Excelsior Venues!");
+                        keepRunning = false;
+                        return;
+                }
             }
         }
 
@@ -99,7 +95,7 @@ namespace Capstone
 
         public void VenueDetails(int venueId)
         {
-            Venue venue = venueDAO.GetSingleVenue(venueId);
+            Venue venue = venueDAO.SelectVenues(venueId);
 
             // Displays
             // Name
@@ -219,28 +215,28 @@ namespace Capstone
             Console.WriteLine("Who is this reservation for?");
             string customerName = Console.ReadLine();
 
-            // makes reservation and gets the new id 
-            int newReservationID = reservationDAO.MakeReservation();
-
-            // uses the ID from the new row in the reservation table to create a Reservation object
-            Reservation newReservation = reservationDAO.GetLastReservation();
-
-            // assigns the estimated cost from the selected space to the 
+            // makes reservation and populate with the privided information
+            Reservation newReservation = new Reservation();
+            
+            newReservation.StartDate = startDate;
+            newReservation.EndDate = startDate.AddDays(numberOfDays);
+            newReservation.NumberOfAttendes = attendees;
+            newReservation.ReservedFor = customerName;
+            newReservation.SpaceID = selectedSpace.Id;
             newReservation.TotalCost = selectedSpace.EstimatedCost;
 
-            // assigns attendes to the numberOfAttendes property in the reservation object
-            newReservation.NumberOfAttendes = attendees;
+            // add the reservation to the database and get back the resevation ID
+            int newReservationID = reservationDAO.MakeReservation(newReservation);
 
             // Displays reservation info back to the user
             DisplayReservation(newReservation);
-
         }
 
         public void DisplayVenue(Venue venue)
         {
             Console.WriteLine(venue.Name);
             Console.WriteLine("Location: " + venue.City + ", " + venue.State);
-            Console.WriteLine("Categories" + String.Join(", ", venue.Categories));
+            //Console.WriteLine("Categories" + String.Join(", ", venue.Categories));
             Console.WriteLine();
             Console.WriteLine(venue.Description);
             Console.WriteLine();

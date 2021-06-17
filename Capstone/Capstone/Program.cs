@@ -28,7 +28,7 @@ namespace Capstone
 
             UserInterface ui = new UserInterface(connectionString);
 
-            ui.Run();
+            ui.MainMenu();
         }
     }
 }
