@@ -5,8 +5,11 @@ using System.Data.SqlClient;
 
 namespace ProjectOrganizer.DAL
 {
+
     public class ProjectSqlDAO : IProjectDAO
     {
+        public bool InTestMode { get; set; }
+
         private readonly string connectionString;
 
         // Constants to store SQL queries/commands
@@ -14,7 +17,7 @@ namespace ProjectOrganizer.DAL
         private const string SqlAssignEmployee = "INSERT INTO project_employee(project_id, employee_id) VALUES(@projectId, @employeeId);";
         private const string SqlRemoveEmployee = "DELETE FROM project_employee WHERE employee_id = @employeeId;";
         private const string SqlCreateProject = "INSERT INTO project(name, from_date, to_date) VALUES(@projectName, @startDate, @endDate); SELECT @@IDENTITY";
-        
+
         // Single Parameter Constructor
         public ProjectSqlDAO(string dbConnectionString)
         {
@@ -47,7 +50,7 @@ namespace ProjectOrganizer.DAL
                     {
                         // create new Project object for each row in the resutl table
                         Project proj = new Project();
-                        
+
                         // assign the values from each column to the Project object
                         proj.ProjectId = Convert.ToInt32(reader["project_id"]);
                         proj.Name = Convert.ToString(reader["name"]);
@@ -99,7 +102,10 @@ namespace ProjectOrganizer.DAL
             {
                 Console.WriteLine("Could not assign employee: " + ex.Message);
 
-                // returns false if the INSERT was unsuccesful
+                if (InTestMode)
+                {
+                    throw;
+                }
                 return false;
             }
         }
@@ -152,7 +158,7 @@ namespace ProjectOrganizer.DAL
             try
             {
                 // establish and open SQL connection
-                using (SqlConnection conn = new SqlConnection(this.connectionString)) 
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
 
@@ -171,11 +177,16 @@ namespace ProjectOrganizer.DAL
             }
             catch (SqlException ex)
             {
-                Console.WriteLine("could not create project: " + ex); ;
+                Console.WriteLine("could not create project: " + ex); 
+
+                if(InTestMode)
+                {
+                    throw;
+                }
             }
             // Return the ID of the new project if one was created
             return newProject.ProjectId;
-        }   
+        }
     }
 }
 
