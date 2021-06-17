@@ -1,6 +1,7 @@
 ﻿using Capstone.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace Capstone.DAL
@@ -24,15 +25,51 @@ namespace Capstone.DAL
         // Adds row to reservatoin table
         // returns id of new reservation
         // SELECT @@IDENTITY
-        public int MakeReservation()
+        public int MakeReservation(Reservation newReservation)
         {
-            return 0;
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(this.connectionString)) 
+                {
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlMakeReservation);
+
+                    Reservation reservation = new Reservation();
+                    command.Parameters.AddWithValue("@spaceId", newReservation.SpaceID);
+                    command.Parameters.AddWithValue("@attendees", newReservation.NumberOfAttendes);
+                    command.Parameters.AddWithValue("@StartDate", newReservation.StartDate);
+                    command.Parameters.AddWithValue("@EndDate", newReservation.EndDate);
+                    command.Parameters.AddWithValue("@customerName", newReservation.ReservedFor);
+
+                    newReservation.ReservationID = Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                Console.WriteLine("could not make reservation"); ;
+            }
+            return newReservation.ReservationID;
         }
 
-        public Reservation GetLastReservation()
+        public Reservation GetLastReservation(int reservationID)
         {
             Reservation reservation = new Reservation();
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(this.connectionString)) 
+                {
+                    conn.Open();
 
+                    SqlCommand command = new SqlCommand(SqlGetLastReservation);
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                Console.WriteLine("No record of that reservation"); ;
+            }
             return reservation;
         }
 
