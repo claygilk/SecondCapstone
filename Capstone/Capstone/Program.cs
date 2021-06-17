@@ -11,8 +11,6 @@ namespace Capstone
     {
         static void Main(string[] args)
         {
-
-
             #region call to appsettings.json for configuration
             // Get the connection string from the appsettings.json file
             IConfigurationBuilder builder = new ConfigurationBuilder()
@@ -24,16 +22,13 @@ namespace Capstone
 
             string connectionString = configuration.GetConnectionString("Project");
 
-
             ReservationDAO reservationDAO = new ReservationDAO(connectionString);
             SpaceDAO spaceDAO = new SpaceDAO(connectionString);
             VenueDAO venue = new VenueDAO(connectionString);
 
             UserInterface ui = new UserInterface(connectionString);
 
-
             ui.Run();
-
         }
     }
 }

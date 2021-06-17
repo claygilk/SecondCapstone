@@ -23,5 +23,9 @@ namespace Capstone.Models
             }
         }
 
+        public override string ToString()
+        {
+            return $"{this.Name} {this.OpenFrom}  {this.OpenTo}  {this.DailyRate}  {this.MaxOccupancy}";
+        }
     }
 }
