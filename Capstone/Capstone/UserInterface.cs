@@ -68,7 +68,8 @@ namespace Capstone
 
         public void ViewVenue()
         {
-            // Shows all venues to user
+            //do
+            // {
             Console.WriteLine("Which venue would you like to view?");
 
             List<Venue> venues = this.venueDAO.GetAllVenues();
@@ -81,15 +82,28 @@ namespace Capstone
 
             string choice = Console.ReadLine();
 
-            // R - returns to previous screen
             if (choice.ToLower() == "r")
             {
                 return;
             }
+
             else
             {
-                VenueDetails(Convert.ToInt32(choice));
+                int venueNumber = CLIHelper.GetInteger(choice);
+
+                while (venueNumber > venues.Count)
+                {
+                    Console.WriteLine("Please select a valid number.");
+                    venueNumber = CLIHelper.GetInteger(Console.ReadLine());
+                }
+                VenueDetails(Convert.ToInt32(venueNumber));
             }
+
+            //}
+            //while (Convert.ToInt32(choice) > venues.Count);
+            // Shows all venues to user
+
+
 
         }
 
@@ -177,9 +191,21 @@ namespace Capstone
 
         public void ReserveSpace(int venueId)
         {
+            Reservation tempReservation = new Reservation();
             // prompt for: start date
-            Console.WriteLine("When do you need the space?");
-            DateTime startDate = Convert.ToDateTime(Console.ReadLine());
+
+
+            bool valid = false;
+            while (!valid)
+            {
+                DateTime tempDate;
+                Console.WriteLine("When do you need the space?");
+
+                valid = DateTime.TryParse(Console.ReadLine(), out tempDate);
+                tempReservation.StartDate = tempDate;
+                Console.WriteLine("Please enter a valid date (mm/dd/yyyy).");
+            }
+
 
             // prompt for: duration
             Console.WriteLine("How many days will you need the space?");
@@ -190,8 +216,8 @@ namespace Capstone
             int attendees = Convert.ToInt32(Console.ReadLine());
 
             // Display all spaces that meet search criterea, if any
-            List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, startDate, numberOfDays);
-            if(spaces.Count == 0) 
+            List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, tempReservation.StartDate, numberOfDays);
+            if (spaces.Count == 0)
             {
                 Console.WriteLine("No Spaces Available");
             }
@@ -212,8 +238,8 @@ namespace Capstone
 
             // select space indicated by user
             var newspace = (from space in spaces
-                                where space.Id == spaceId
-                                select space);
+                            where space.Id == spaceId
+                            select space);
 
             Space selectedSpace = newspace.First();
 
@@ -222,22 +248,22 @@ namespace Capstone
             string customerName = Console.ReadLine();
 
             // makes reservation and populate with the privided information
-            Reservation newReservation = new Reservation();
-            
-            newReservation.StartDate = startDate;
-            newReservation.EndDate = startDate.AddDays(numberOfDays);
-            newReservation.NumberOfAttendes = attendees;
-            newReservation.ReservedFor = customerName;
-            newReservation.SpaceID = selectedSpace.Id;
-            newReservation.TotalCost = selectedSpace.EstimatedCost;
-            newReservation.SpaceName = selectedSpace.Name;
-            newReservation.VenueName = venueDAO.SelectVenues(venueId).Name;
+
+
+
+            tempReservation.EndDate = tempReservation.StartDate.AddDays(numberOfDays);
+            tempReservation.NumberOfAttendes = attendees;
+            tempReservation.ReservedFor = customerName;
+            tempReservation.SpaceID = selectedSpace.Id;
+            tempReservation.TotalCost = selectedSpace.EstimatedCost;
+            tempReservation.SpaceName = selectedSpace.Name;
+            tempReservation.VenueName = venueDAO.SelectVenues(venueId).Name;
 
             // add the reservation to the database and get back the resevation ID
-            int newReservationID = reservationDAO.MakeReservation(newReservation);
+            int newReservationID = reservationDAO.MakeReservation(tempReservation);
 
             // Displays reservation info back to the user
-            DisplayReservation(newReservation);
+            DisplayReservation(tempReservation);
         }
 
         public void DisplayVenue(Venue venue)
