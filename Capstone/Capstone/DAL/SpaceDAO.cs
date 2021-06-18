@@ -14,9 +14,17 @@ namespace Capstone.DAL
         private const string SqlGetAllSpaces = "SELECT * FROM space WHERE venue_id = @venueId ";
         private const string SqlSearchSpaceAvailability = "SELECT * FROM space WHERE open_from < @startDate AND open_to > @endDate;";
         private const string SqlSearchSpaceAvailabilityTop5 = 
-            "SELECT s.id AS id, s.name AS name, daily_rate, max_occupancy, is_accessible " +
-            "FROM space s JOIN reservation r ON r.space_id = s.id JOIN venue v ON v.id = s.venue_id " +
-            "WHERE v.id = @venueId AND @startDate NOT BETWEEN r.start_date AND r.end_date AND @endDate NOT BETWEEN r.start_date AND r.end_date";
+            "SELECT TOP 5 s.id AS id, s.name AS name, daily_rate, max_occupancy, is_accessible " +
+            "FROM reservation r " +
+            "JOIN space s ON r.space_id = s.id " +
+            "JOIN venue v ON v.id = s.venue_id " +
+            "WHERE v.id = @venueId " +
+            "AND s.id NOT IN " +
+            "( SELECT s.id FROM space s JOIN reservation r ON r.space_id = s.id " +
+            "WHERE @startDate BETWEEN r.start_date AND r.end_date " +
+            "OR @endDate BETWEEN r.start_date AND r.end_date) " +
+            "GROUP BY s.id,s.name, daily_rate, max_occupancy, is_accessible " +
+            "ORDER BY daily_rate";
         
         public SpaceDAO(string connectionString)
         {

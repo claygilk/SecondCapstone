@@ -33,7 +33,7 @@ namespace Capstone.DAL
                 {
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlMakeReservation);
+                    SqlCommand command = new SqlCommand(SqlMakeReservation, conn);
 
                     Reservation reservation = new Reservation();
                     command.Parameters.AddWithValue("@spaceId", newReservation.SpaceID);

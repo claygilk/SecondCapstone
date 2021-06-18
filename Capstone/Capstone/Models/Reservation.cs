@@ -8,6 +8,8 @@ namespace Capstone.Models
     {
         public int ReservationID { get; set; }
         public int SpaceID { get; set; }
+        public string SpaceName { get; set; }
+        public string VenueName { get; set; }
         public int NumberOfAttendes { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

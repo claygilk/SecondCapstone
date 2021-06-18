@@ -211,9 +211,11 @@ namespace Capstone
             }
 
             // select space indicated by user
-            Space selectedSpace = (Space)(from space in spaces
+            var newspace = (from space in spaces
                                 where space.Id == spaceId
                                 select space);
+
+            Space selectedSpace = newspace.First();
 
             // prompt user for a name to put on the reservation
             Console.WriteLine("Who is this reservation for?");
@@ -228,6 +230,8 @@ namespace Capstone
             newReservation.ReservedFor = customerName;
             newReservation.SpaceID = selectedSpace.Id;
             newReservation.TotalCost = selectedSpace.EstimatedCost;
+            newReservation.SpaceName = selectedSpace.Name;
+            newReservation.VenueName = venueDAO.SelectVenues(venueId).Name;
 
             // add the reservation to the database and get back the resevation ID
             int newReservationID = reservationDAO.MakeReservation(newReservation);
@@ -254,14 +258,14 @@ namespace Capstone
 
         public void DisplayReservation(Reservation reservation)
         {
-            Console.WriteLine($"Confirmation #: {reservation.ReservationID.GetHashCode()}");
-            //Console.WriteLine($"Venue: {reservation}");
-            Console.WriteLine($"Space: {reservation.SpaceID}");
+            Console.WriteLine($"Confirmation #: {reservation.ReservationID}");
+            Console.WriteLine($"Venue: {reservation.VenueName}");
+            Console.WriteLine($"Space: {reservation.SpaceName}");
             Console.WriteLine($"Reserved For: {reservation.ReservedFor}");
             Console.WriteLine($"Attendees: {reservation.NumberOfAttendes}");
-            Console.WriteLine($"Arrival Date: {reservation.StartDate}");
-            Console.WriteLine($"Depart Date: {reservation.EndDate}");
-            Console.WriteLine($"Total Cost: {reservation.TotalCost}");
+            Console.WriteLine($"Arrival Date: {reservation.StartDate.Month}/{reservation.StartDate.Day}/{reservation.StartDate.Year}");
+            Console.WriteLine($"Depart Date: {reservation.EndDate.Month}/{reservation.EndDate.Day}/{reservation.EndDate.Year}");
+            Console.WriteLine($"Total Cost: {reservation.TotalCost:c}");
         }
     }
 }
