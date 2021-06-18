@@ -12,7 +12,7 @@ namespace Capstone
     {
         public static int GetInteger(string message)
         {
-            string userInput;
+            string userInput = message;
             int intValue;
             int numberOfAttempts = 0;
 
@@ -21,10 +21,9 @@ namespace Capstone
                 if (numberOfAttempts > 0)
                 {
                     Console.WriteLine("Invalid input format. Please try again");
+                    userInput = Console.ReadLine();
                 }
 
-                Console.Write(message + " ");
-                userInput = Console.ReadLine();
                 numberOfAttempts++;
             }
             while (!int.TryParse(userInput, out intValue));
@@ -96,7 +95,7 @@ namespace Capstone
 
             return userInput;
         }
-      
+
         public static DateTime FirstOf(int month)
         {
             DateTime now = DateTime.Now;

@@ -68,8 +68,6 @@ namespace Capstone
 
         public void ViewVenue()
         {
-            //do
-            // {
             Console.WriteLine("Which venue would you like to view?");
 
             List<Venue> venues = this.venueDAO.GetAllVenues();
@@ -96,15 +94,8 @@ namespace Capstone
                     Console.WriteLine("Please select a valid number.");
                     venueNumber = CLIHelper.GetInteger(Console.ReadLine());
                 }
-                VenueDetails(Convert.ToInt32(venueNumber));
+                VenueDetails(venueNumber);
             }
-
-            //}
-            //while (Convert.ToInt32(choice) > venues.Count);
-            // Shows all venues to user
-
-
-
         }
 
         public void VenueDetails(int venueId)
