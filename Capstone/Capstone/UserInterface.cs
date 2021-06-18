@@ -151,6 +151,7 @@ namespace Capstone
             List<Space> spaces = spaceDAO.GetAllSpaces(venueId);
 
             // Display all Space information: Name, open/close, rate, max occup
+            Console.WriteLine("Name  Open  Close  Rate  Max Occupancy");
             foreach (Space space in spaces)
             {
                 Console.WriteLine(space.ToString());
@@ -190,7 +191,10 @@ namespace Capstone
 
             // Display all spaces that meet search criterea, if any
             List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, startDate, numberOfDays);
-
+            if(spaces.Count == 0) 
+            {
+                Console.WriteLine("No Spaces Available");
+            }
             foreach (Space space in spaces)
             {
                 space.DaysReserved = numberOfDays;
@@ -245,7 +249,7 @@ namespace Capstone
 
         public void DisplaySpaceForReservation(Space space)
         {
-            Console.WriteLine($"{space.Id} {space.Name} {space.DailyRate} {space.MaxOccupancy} {space.IsAccessible} {space.EstimatedCost}");
+            Console.WriteLine($"{space.Id} {space.Name} {space.DailyRate.ToString("c")} {space.MaxOccupancy} {space.IsAccessible} {space.EstimatedCost.ToString("c")}");
         }
 
         public void DisplayReservation(Reservation reservation)

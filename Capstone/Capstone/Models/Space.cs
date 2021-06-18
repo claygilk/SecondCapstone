@@ -25,7 +25,7 @@ namespace Capstone.Models
 
         public override string ToString()
         {
-            return $"{this.Name} {this.OpenFrom}  {this.OpenTo}  {this.DailyRate}  {this.MaxOccupancy}";
+            return $"{this.Name} {this.OpenFrom.Month}  {this.OpenTo.Month}  {this.DailyRate.ToString("c")}  {this.MaxOccupancy}";
         }
     }
 }

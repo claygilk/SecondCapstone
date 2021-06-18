@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Capstone.DAL;
 
 namespace Capstone
 {
@@ -94,6 +95,17 @@ namespace Capstone
             while (string.IsNullOrEmpty(userInput));
 
             return userInput;
+        }
+      
+        public static DateTime FirstOf(int month)
+        {
+            DateTime now = DateTime.Now;
+            return new DateTime(now.Year, month, 1);
+        }
+        public static DateTime LastOf(int month)
+        {
+            DateTime now = DateTime.Now;
+            return new DateTime(now.Year, month, DateTime.DaysInMonth(now.Year, month));
         }
     }
 }
