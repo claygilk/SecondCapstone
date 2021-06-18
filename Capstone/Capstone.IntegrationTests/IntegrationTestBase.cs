@@ -39,7 +39,7 @@ namespace Capstone.IntegrationTests
             string sql = File.ReadAllText("setup.sql");
 
             // Execute the script
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            using (SqlConnection conn = new SqlConnection(this.ConnectionString))
             {
                 conn.Open();
 

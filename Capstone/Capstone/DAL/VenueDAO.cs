@@ -101,7 +101,7 @@ namespace Capstone.DAL
             }
             return venue;
         }
-        public List<string> GetCategoriesForVenue()
+        public List<string> GetCategoriesForVenue(int venueId)
         {
             List<string> categories = new List<string>();
             try
@@ -109,7 +109,10 @@ namespace Capstone.DAL
                 using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
-                    SqlCommand command = new SqlCommand(SqlGetcategories);
+
+                    SqlCommand command = new SqlCommand(SqlGetcategories, conn);
+                    command.Parameters.AddWithValue("@venueId", venueId);
+
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
