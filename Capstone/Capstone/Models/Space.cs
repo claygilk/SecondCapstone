@@ -10,7 +10,6 @@ namespace Capstone.Models
         public int VenueId { get; set; }
         public string Name { get; set; }
         public bool IsAccessible { get; set; }
-
         public string DisplayAccessability
         {
             get
