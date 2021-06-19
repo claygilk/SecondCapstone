@@ -248,7 +248,7 @@ namespace Capstone
             // A spaceDAO object is used to query the databse and return a list of (up to) 5 spaces that meet the user's search criteria
             // results are ordered by from cheapest to most expensive
             List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, tempReservation.StartDate, numberOfDays);
-
+            spaces.RemoveAll(space => (space.MaxOccupancy < tempReservation.NumberOfAttendes));
             // If no spaces meet the user's criteria they are informed
             if (spaces.Count == 0)
             {
@@ -259,12 +259,13 @@ namespace Capstone
             {
                 Console.WriteLine();
                 Console.WriteLine("----- Available Spaces -----");
+                Console.WriteLine("Space#".PadRight(10) + "Name".PadRight(40) + "DailyRate".PadRight(15) + "MaxOccup.".PadRight(10) + "Accessible?".PadRight(15) + "TotalCost");
                 foreach (Space space in spaces)
                 {
                     // the number of days variable is assigned to the .DaysReserved proprtey
                     // so that the space object can calculate the total price
                     space.DaysReserved = numberOfDays;
-
+                    
                     DisplaySpaceForReservation(space);
                 }
             }
@@ -377,7 +378,7 @@ namespace Capstone
 
         public void DisplaySpaceForReservation(Space space)
         {
-            Console.WriteLine($"{space.Id} {space.Name} {space.DailyRate.ToString("c")} {space.MaxOccupancy} {space.IsAccessible} {space.EstimatedCost.ToString("c")}");
+            Console.WriteLine(space.Id.ToString().PadRight(10) + space.Name.PadRight(40) + space.DailyRate.ToString("c").PadRight(15) + space.MaxOccupancy.ToString().PadRight(10) + space.DisplayAccessability.PadRight(15) + space.EstimatedCost.ToString("c"));
         }
 
         public void DisplayReservation(Reservation reservation)
