@@ -131,16 +131,3 @@ namespace Capstone.DAL
 
     }
 }
-
-//bool validNumber = false;
-//while (!validNumber)
-//{
-//    int userNumber;
-//    Console.WriteLine("How many days will you need the space?");
-
-//    validNumber = int.TryParse(Console.ReadLine(), out userNumber);
-//    //numberOfDays = Convert.ToInt32(Console.ReadLine());
-//    tempReservation.ReservedFor = userNumber.ToString();
-//    Console.WriteLine("Please enter a whole number.");
-
-//}

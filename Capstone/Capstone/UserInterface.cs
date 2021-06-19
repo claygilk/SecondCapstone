@@ -196,8 +196,6 @@ namespace Capstone
         /// <param name="venueId"></param>
         public void ListSpaces(int venueId)
         {
-            
-
             // the variable that stores the user's input is initialized outside the following do-while loop
             // so that it can be used in the while-condition and the do-block
             string choice = "";
@@ -245,7 +243,6 @@ namespace Capstone
             // Create temporary reservation object to store user input before making reservation
             Reservation tempReservation = new Reservation();
 
-            
             GetDatesAndAttendees(tempReservation, out int numberOfDays);
 
             // A spaceDAO object is used to query the databse and return a list of (up to) 5 spaces that meet the user's search criteria
@@ -272,27 +269,7 @@ namespace Capstone
                 }
             }
 
-            // prompt user to select available Space
-            Console.WriteLine();
-            Console.WriteLine("Which space would you like to reserve (enter 0 to cancel)?");
-            int spaceId = Convert.ToInt32(Console.ReadLine());
-
-
-            if (spaceId == 0)
-            {
-                return;
-            }
-
-            // select space indicated by user
-            var newspace = (from space in spaces
-                            where space.Id == spaceId
-                            select space);
-
-            Space selectedSpace = newspace.First();
-
-            // prompt user for a name to put on the reservation
-            Console.WriteLine("Who is this reservation for?");
-            string customerName = Console.ReadLine();
+            Space selectedSpace = GetNameAndSpaceOfReservation(spaces, out string customerName);
 
             // makes reservation and populate with the privided information
             tempReservation.EndDate = tempReservation.StartDate.AddDays(numberOfDays);
@@ -305,12 +282,53 @@ namespace Capstone
             // add the reservation to the database and get back the resevation ID
             int newReservationID = reservationDAO.MakeReservation(tempReservation);
 
-            // Displays reservation info back to the user
+            if (newReservationID != 0)
+            {
+                // Displays reservation info back to the user
+                Console.WriteLine();
+                DisplayReservation(tempReservation);
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to Return to the Previous Screen");
+                Console.ReadLine();
+            }
+            
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="spaces"></param>
+        /// <param name="customerName"></param>
+        /// <returns></returns>
+        public Space GetNameAndSpaceOfReservation(List<Space> spaces, out string customerName)
+        {
+            customerName = "";
+            Space selectedSpace = new Space();
+
+            // prompt user to select available Space
             Console.WriteLine();
-            DisplayReservation(tempReservation);
-            Console.WriteLine();
-            Console.WriteLine("Press Enter to Return to the Previous Screen");
-            Console.ReadLine();
+            Console.WriteLine("Which space would you like to reserve (enter 0 to cancel)?");
+            int spaceId = Convert.ToInt32(Console.ReadLine());
+
+
+            if (spaceId == 0)
+            {
+                return selectedSpace;
+            }
+
+            // select space indicated by user
+            var newspace = (from space in spaces
+                            where space.Id == spaceId
+                            select space);
+
+            selectedSpace = newspace.First();
+
+            // prompt user for a name to put on the reservation
+            Console.WriteLine("Who is this reservation for?");
+            customerName = Console.ReadLine();
+
+            return selectedSpace;
+
         }
 
         private static void GetDatesAndAttendees(Reservation tempReservation, out int numberOfDays)
@@ -341,7 +359,7 @@ namespace Capstone
 
             // Prompt user for duration
             numberOfDays = CLIHelper.GetInteger("How many days will you need the space?");
-            
+
             // Prompt user for number of attendees
             tempReservation.NumberOfAttendes = CLIHelper.GetInteger("How many people will be in attendance?");
         }
