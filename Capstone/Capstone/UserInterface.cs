@@ -156,7 +156,7 @@ namespace Capstone
             List<Space> spaces = spaceDAO.GetAllSpaces(venueId);
 
             // Display all Space information: Name, open/close, rate, max occup
-            Console.WriteLine("Name  Open  Close  Rate  Max Occupancy");
+            Console.WriteLine("Name   Open   Close   Rate   Max Occupancy");
             foreach (Space space in spaces)
             {
                 Console.WriteLine(space.ToString());
@@ -182,25 +182,41 @@ namespace Capstone
 
         public void ReserveSpace(int venueId)
         {
+            
             Reservation tempReservation = new Reservation();
-            // prompt for: start date
+
+            ////int numberOfDays = Convert.ToInt32(tempReservation.ReservedFor);
+            //// prompt for: start date
+
+            //bool valid = false;
+            //while (!valid)
+            //{
+            //    DateTime tempDate;
+            //    Console.WriteLine("When do you need the space?");
+
+            //    valid = DateTime.TryParse(Console.ReadLine(), out tempDate);
+            //    tempReservation.StartDate = tempDate;
+            //    Console.WriteLine("Please enter a valid date (mm/dd/yyyy).");
+            //}
+            //DisplayReservation(tempReservation);
 
 
-            bool valid = false;
-            while (!valid)
-            {
-                DateTime tempDate;
-                Console.WriteLine("When do you need the space?");
-
-                valid = DateTime.TryParse(Console.ReadLine(), out tempDate);
-                tempReservation.StartDate = tempDate;
-                Console.WriteLine("Please enter a valid date (mm/dd/yyyy).");
-            }
-
-
-            // prompt for: duration
-            Console.WriteLine("How many days will you need the space?");
+            // // prompt for: duration
             int numberOfDays = Convert.ToInt32(Console.ReadLine());
+
+            // bool validNumber = false;
+            // while (!validNumber)
+            // {
+            //     int userNumber;
+            //     Console.WriteLine("How many days will you need the space?");
+
+            //     validNumber = int.TryParse(Console.ReadLine(), out userNumber);
+            //     //numberOfDays = Convert.ToInt32(Console.ReadLine());
+            //     tempReservation.ReservedFor = userNumber.ToString();
+            //     Console.WriteLine("Please enter a whole number.");
+
+            // }
+            // DisplayReservation(tempReservation);
 
             // prompt for: attendees
             Console.WriteLine("How many people will be in attendance?");

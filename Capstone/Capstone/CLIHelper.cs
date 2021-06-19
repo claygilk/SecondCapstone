@@ -66,7 +66,7 @@ namespace Capstone
                     Console.WriteLine("Invalid input format. Please try again");
                 }
 
-                Console.Write(message + " ");
+                Console.Write(" ");
                 userInput = Console.ReadLine();
                 numberOfAttempts++;
             }
