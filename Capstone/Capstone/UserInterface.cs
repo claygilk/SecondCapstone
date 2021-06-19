@@ -37,10 +37,14 @@ namespace Capstone
         }
 
         // Methods
+        /// <summary>
+        /// The main menu which allows the user to navigate to the ViewVenue() menu or quit the program.
+        /// </summary>
         public void MainMenu()
         {
             bool keepRunning = true;
 
+            // Program continues to run until the users selects "Q" from the main menu
             while (keepRunning)
             {
                 // Asks user to select from two options:
@@ -63,59 +67,85 @@ namespace Capstone
                         Console.WriteLine("Thank you for booking with Excelsior Venues!");
                         keepRunning = false;
                         return;
+
+                    // Loop continues until the user makes a valid selection
+                    default:
+                        Console.WriteLine("Invalid Input");
+                        break;
                 }
             }
         }
 
+        /// <summary>
+        /// Lists all venues in the database and then prompts the user to select one to view.
+        /// Navigates to the VenueDetails() menu, once user selects a venue from the list.
+        /// Returns to the main menu when complete.
+        /// </summary>
         public void ViewVenue()
         {
             Console.WriteLine("Which venue would you like to view?");
 
+            // Creates a list of all venues in the database returned by the VenueDAO object 
             List<Venue> venues = this.venueDAO.GetAllVenues();
 
+            // Displays the name and Id of each venue in alphabetical order
             foreach (Venue v in venues)
             {
                 Console.WriteLine(v.Id.ToString().PadLeft(2) + ")  " + v.Name);
             }
             Console.WriteLine();
 
-            string choice = Console.ReadLine();
+            // gets input from user
+            string choice = Console.ReadLine().ToLower();
 
-            if (choice.ToLower() == "r")
+            // If user selects "r", returns to the MainMenu()
+            if (choice == "r")
             {
                 return;
             }
 
+            // For all other input, this else block ensures that the user eneters a valid venue id number
             else
             {
+                // TryParse() creates an int variable and a bool variable
+                // 'choiceIsIn' is true if the input is an integer
                 bool choiceIsInt = int.TryParse(choice, out int venueNumber);
 
+                // while loop checks that choice is an integer that corresponds to an exisiting venue number
                 while (venueNumber > venues.Count || venueNumber < 1 || !choiceIsInt)
                 {
                     Console.WriteLine("Please select a valid venue number.");
                     choiceIsInt = int.TryParse(Console.ReadLine(), out venueNumber);
                 }
+
+                // navigates to the VenueDetails() menu for the venue indicated by the user
                 VenueDetails(venueNumber);
             }
         }
 
+        /// <summary>
+        /// Displays VenueDetails() then prompts the user to either navigate to the ListSpaces() menu,
+        /// or return to the previous menu
+        /// </summary>
+        /// <param name="venueId"></param>
         public void VenueDetails(int venueId)
         {
+            // this variable which stores the user's input is initialized outside of the do-while loop
+            // so that it can be used in the while conidition and within the do-block
             string choice = "";
 
             do
             {
+                // venueDAO object is used to query the database and return a C# object that 
+                // corresponds to the venuse selected by the user
                 Venue venue = venueDAO.SelectVenues(venueId);
 
-                // Displays
-                // Name
-                // Location (City,State)
-                // Categories
-                // Description:
+                // This Method displays the following Venue information:
+                // Name, Location (City, State), and Description
                 DisplayVenue(venue);
 
-
-                // Prompt user to select an option
+                // Prompt user either view spaces at a venue
+                // or return to the previous menu
                 Console.WriteLine("What would you like to do next?");
                 Console.WriteLine("1) View Spaces");
                 //Console.WriteLine("2) Search for availble reservation slots");
@@ -135,14 +165,13 @@ namespace Capstone
                     // r. return to prev screen
                     case "r":
                         return;
+
+                    // tells user their selection is invalid and then repeats the do-while loop
                     default:
                         Console.WriteLine("Invalid Selection");
                         break;
                 }
-
             } while (choice != "1" || choice != "r");
-
-
         }
 
         //BONUS
@@ -159,34 +188,56 @@ namespace Capstone
         //    // Return to previous menu
         //}
 
+        /// <summary>
+        /// This menu displays all the spaces at a given venue.
+        /// The user can either navigate to the ReserveSpace() menu 
+        /// or the previous menue
+        /// </summary>
+        /// <param name="venueId"></param>
         public void ListSpaces(int venueId)
         {
-            // get list of spaces at this venue
-            List<Space> spaces = spaceDAO.GetAllSpaces(venueId);
+            
 
-            // Display all Space information: Name, open/close, rate, max occup
-            Console.WriteLine("Name".PadRight(25) + "Open".PadRight(10) + "Close".PadRight(10) + "Rate".PadRight(15) + "Max Occupancy");
-            foreach (Space space in spaces)
+            // the variable that stores the user's input is initialized outside the following do-while loop
+            // so that it can be used in the while-condition and the do-block
+            string choice = "";
+
+            // this loop repeats until the user makes a valid selection
+            do
             {
-                Console.WriteLine(space.ToString());
-            }
+                // get list of spaces at this venue by using a spaceDAO object to query the database
+                List<Space> spaces = spaceDAO.GetAllSpaces(venueId);
 
-            Console.WriteLine("What would you like to do next?");
-            Console.WriteLine("1) Reserve a Space");
-            Console.WriteLine("R) return to previous screen");
-            string choice = Console.ReadLine();
+                // Display all Space information: Name, open/close, rate, max occup
+                Console.WriteLine("Name".PadRight(25) + "Open".PadRight(10) + "Close".PadRight(10) + "Rate".PadRight(15) + "Max Occupancy");
+                foreach (Space space in spaces)
+                {
+                    Console.WriteLine(space.ToString());
+                }
 
-            switch (choice.ToLower())
-            {
-                // prompt user to reserve space
-                case "1":
-                    ReserveSpace(venueId);
-                    break;
+                // Prompt user to reserve a space 
+                // or return to the previous menu
+                Console.WriteLine("What would you like to do next?");
+                Console.WriteLine("1) Reserve a Space");
+                Console.WriteLine("R) return to previous screen");
 
-                // or return to previous screen
-                case "r":
-                    return;
-            }
+                choice = Console.ReadLine().ToLower();
+                switch (choice)
+                {
+                    // prompt user to reserve space
+                    case "1":
+                        ReserveSpace(venueId);
+                        break;
+
+                    // or return to previous screen
+                    case "r":
+                        return;
+
+                    default:
+                        Console.WriteLine("Invalid Input");
+                        break;
+                }
+            } while (choice != "1" || choice != "r");
         }
 
         public void ReserveSpace(int venueId)
@@ -194,61 +245,29 @@ namespace Capstone
             // Create temporary reservation object to store user input before making reservation
             Reservation tempReservation = new Reservation();
 
-            // prompt for: start date
-
-            // While loop is used to continue to prompt user for a start date until they enter a valid date
-            bool validDate = false;
-
-            while (!validDate)
-            {
-                Console.WriteLine("When do you need the space?");
-
-                DateTime tempDate;
-                validDate = DateTime.TryParse(Console.ReadLine(), out tempDate);
-
-                tempReservation.StartDate = tempDate;
-
-                if (!validDate)
-                {
-                    Console.WriteLine("Please enter a valid date (mm/dd/yyyy).");
-                }
-            }
-
-            // prompt for: duration
-            int numberOfDays = CLIHelper.GetInteger("How many days will you need the space?");
-
-            //bool validNumber = false;
-
-            //while (!validNumber)
-            //{
-            //    int userNumber;
-            //    Console.WriteLine("How many days will you need the space?");
-
-            //    validNumber = int.TryParse(Console.ReadLine(), out userNumber);
-            //    //numberOfDays = Convert.ToInt32(Console.ReadLine());
-            //    tempReservation.ReservedFor = userNumber.ToString();
-            //    Console.WriteLine("Please enter a whole number.");
-
-            //}
-
-
-            // prompt for: attendees
-            int attendees = CLIHelper.GetInteger("How many people will be in attendance?");
-
-            // Display all spaces that meet search criterea, if any
-            List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, tempReservation.StartDate, numberOfDays);
             
+            GetDatesAndAttendees(tempReservation, out int numberOfDays);
+
+            // A spaceDAO object is used to query the databse and return a list of (up to) 5 spaces that meet the user's search criteria
+            // results are ordered by from cheapest to most expensive
+            List<Space> spaces = spaceDAO.SearchTop5SpaceAvailability(venueId, tempReservation.StartDate, numberOfDays);
+
+            // If no spaces meet the user's criteria they are informed
             if (spaces.Count == 0)
             {
                 Console.WriteLine("No Spaces Available");
             }
+            // Otherwise, available spaces are listed
             else
             {
                 Console.WriteLine();
                 Console.WriteLine("----- Available Spaces -----");
                 foreach (Space space in spaces)
                 {
+                    // the number of days variable is assigned to the .DaysReserved proprtey
+                    // so that the space object can calculate the total price
                     space.DaysReserved = numberOfDays;
+
                     DisplaySpaceForReservation(space);
                 }
             }
@@ -257,8 +276,8 @@ namespace Capstone
             Console.WriteLine();
             Console.WriteLine("Which space would you like to reserve (enter 0 to cancel)?");
             int spaceId = Convert.ToInt32(Console.ReadLine());
-            
-            
+
+
             if (spaceId == 0)
             {
                 return;
@@ -277,7 +296,6 @@ namespace Capstone
 
             // makes reservation and populate with the privided information
             tempReservation.EndDate = tempReservation.StartDate.AddDays(numberOfDays);
-            tempReservation.NumberOfAttendes = attendees;
             tempReservation.ReservedFor = customerName;
             tempReservation.SpaceID = selectedSpace.Id;
             tempReservation.TotalCost = selectedSpace.EstimatedCost;
@@ -293,6 +311,39 @@ namespace Capstone
             Console.WriteLine();
             Console.WriteLine("Press Enter to Return to the Previous Screen");
             Console.ReadLine();
+        }
+
+        private static void GetDatesAndAttendees(Reservation tempReservation, out int numberOfDays)
+        {
+            // This bool is initialized before the following while loop so that it can be used
+            // both in the condition and the body of the following while loop
+            bool validDate = false;
+
+            // While loop is used to continue to prompt user for a start date until they enter a valid date
+            while (!validDate)
+            {
+                // Prompt user for start date:
+                Console.WriteLine("When do you need the space?");
+
+                // declare date time variable to store user input, if it is in the correct format
+                DateTime tempDate;
+                validDate = DateTime.TryParse(Console.ReadLine(), out tempDate);
+
+                // if the user input can be parsed as a date it will be stored in the ".StartDate" property
+                tempReservation.StartDate = tempDate;
+
+                if (!validDate)
+                {
+                    // informs user of expected date format
+                    Console.WriteLine("Please enter a valid date (mm/dd/yyyy).");
+                }
+            }
+
+            // Prompt user for duration
+            numberOfDays = CLIHelper.GetInteger("How many days will you need the space?");
+            
+            // Prompt user for number of attendees
+            tempReservation.NumberOfAttendes = CLIHelper.GetInteger("How many people will be in attendance?");
         }
 
         public void DisplayVenue(Venue venue)
