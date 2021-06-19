@@ -4,6 +4,8 @@ USE master;
 -- Switch to excelsio_venues database
 USE excelsior_venues;
 
+DBCC CHECKIDENT (reservation, RESEED, 0)
+
 -- Delete all rows from all tables
 DELETE FROM category_venue;
 DELETE FROM category;
@@ -33,6 +35,7 @@ INSERT INTO venue (id, name, city_id, description) VALUES (1, 'Hidden Owl Eatery
 
 -- Painted Squirrel Club
 INSERT INTO venue (id, name, city_id, description) VALUES (2, 'Painted Squirrel Club', 1, 'Lock in your reservation now! This venue has dungeons and an underground theme. Not for the faint of heart!');
+INSERT INTO venue (id, name, city_id, description) VALUES (3, 'Test Venue', 1, 'This venue is booked out for the year');
 
 SET IDENTITY_INSERT venue OFF 
 
@@ -49,9 +52,16 @@ INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_
 INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) VALUES (8, 1, 'Test Place', 1, 2, 8, '900', 60);
 
 -- Painted Squirrel Club Spaces
-INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) VALUES (9, 2, 'The Dungeon', 0, NULL, NULL, '7200', 240);
-INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) VALUES (10, 2, 'Cruel Convention Hall', 0, NULL, NULL, '1400', 70);
+INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) VALUES (9, 2, 'The Dungeon', 0, 3, 8, '7200', 240);
+INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) VALUES (10, 2, 'Cruel Convention Hall', 0, 3, 8, '1400', 70);
+
+-- Test Space
+INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy) 
+	       VALUES (11, 3, 'Test Space', 1, NULL, NULL, '5250', 210);
+
+
 SET IDENTITY_INSERT space OFF
+
 
 -- CATEGORY --
 SET IDENTITY_INSERT category ON
@@ -70,11 +80,15 @@ INSERT INTO category_venue (venue_id, category_id) VALUES (2, 1);
 SET IDENTITY_INSERT reservation ON
 
 -- Hidden Owl Eatery Spaces
-INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (1, 7, 165, GETDATE()-2, GETDATE()+2, 'Smith Family Reservation');
+INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (1, 7, 165, '01-01-2021', '01-02-2021', 'Smith Family Reservation');
 INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (2, 8, 140, GETDATE()-6, GETDATE()-3, 'Lockhart Family Reservation');
 
 -- Painted Squirrel Club Spaces
-INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (7, 9, 67, GETDATE(), GETDATE()+1, 'Claus Family Reservation');
-INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (8, 9, 40, GETDATE()-7, GETDATE()-5, 'Taylor Family Reservation');
+INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (5, 9, 67, GETDATE(), GETDATE()+1, 'Claus Family Reservation');
+INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) VALUES (4, 9, 40, GETDATE()-7, GETDATE()-5, 'Taylor Family Reservation');
+
+-- Test Venue Spaces
+INSERT INTO reservation (reservation_id, space_id, number_of_attendees, start_date, end_date, reserved_for) 
+				 VALUES (3, 11, 165, '01-01-2021', '12-31-2021', 'The Whole Year Reservation');
 
 SET IDENTITY_INSERT reservation OFF

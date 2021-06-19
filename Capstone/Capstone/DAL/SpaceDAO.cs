@@ -15,10 +15,11 @@ namespace Capstone.DAL
         private const string SqlSearchSpaceAvailability = "SELECT * FROM space WHERE open_from < @startDate AND open_to > @endDate;";
         private const string SqlSearchSpaceAvailabilityTop5 = 
             "SELECT TOP 5 s.id AS id, s.name AS name, daily_rate, max_occupancy, is_accessible " +
-            "FROM reservation r " +
-            "JOIN space s ON r.space_id = s.id " +
+            "FROM space s " +
             "JOIN venue v ON v.id = s.venue_id " +
-            "WHERE v.id = @venueId " +
+            "WHERE s.venue_id = @venueId " +
+            "AND s.id NOT IN " +
+            "(SELECT s.id FROM space s WHERE @startMonth < s.open_from OR @endMonth >= s.open_to) " +
             "AND s.id NOT IN " +
             "( SELECT s.id FROM space s JOIN reservation r ON r.space_id = s.id " +
             "WHERE @startDate BETWEEN r.start_date AND r.end_date " +
@@ -135,7 +136,9 @@ namespace Capstone.DAL
 
                     SqlCommand cmd = new SqlCommand(SqlSearchSpaceAvailabilityTop5, conn);
                     cmd.Parameters.AddWithValue("@startDate", startDate);
+                    cmd.Parameters.AddWithValue("@startMonth", startDate.Month);
                     cmd.Parameters.AddWithValue("@endDate", startDate.AddDays(numberOfDays));
+                    cmd.Parameters.AddWithValue("@endMonth", startDate.AddDays(numberOfDays).Month);
                     cmd.Parameters.AddWithValue("@venueId", venueId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
