@@ -27,7 +27,7 @@ namespace Capstone.IntegrationTests
 
             // Assert
             // There are 5 reservations in the database at the start of the transaction
-            // So the next one to be add should be assigned the id of 6
+            // So the next one to be added should be assigned the id of 6
             Assert.AreEqual(6, newId);
         }
 
@@ -43,11 +43,12 @@ namespace Capstone.IntegrationTests
             reservation.ReservedFor = "Test Client";
 
             ReservationDAO dao = new ReservationDAO(this.ConnectionString);
+
             // Act
             int newId = dao.MakeReservation(reservation);
 
             // Assert
-            // If no resevation is created MakeReservation() will return default value '0'
+            // If no resevation is created MakeReservation() will return default int value '0'
             Assert.AreEqual(0, newId);
         }
     }

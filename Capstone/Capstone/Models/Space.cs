@@ -25,15 +25,11 @@ namespace Capstone.Models
 
         public override string ToString()
         {
-<<<<<<< HEAD
-            return $"{this.Name}  {this.OpenFrom.Month}  {this.OpenTo.Month}  {this.DailyRate.ToString("c")}  {this.MaxOccupancy}";
-=======
             if (this.OpenFrom.HasValue && this.OpenTo.HasValue)
             {
-                return $"{this.Name} {this.OpenFrom.Value.Month}  {this.OpenTo.Value.Month}  {this.DailyRate.ToString("c")}  {this.MaxOccupancy}";
+                return this.Name.PadRight(25) + this.OpenFrom.Value.Month.ToString().PadRight(10) + this.OpenTo.Value.Month.ToString().PadRight(10) + this.DailyRate.ToString("c").PadRight(15) +  this.MaxOccupancy;
             }
-            return $"{this.Name} NA  NA  {this.DailyRate.ToString("c")}  {this.MaxOccupancy}";
->>>>>>> ad592737da70d27de87019c9f7144b12f2935d56
+            return this.Name.PadRight(25)+ "NA".PadRight(10) + "NA".PadRight(10) + this.DailyRate.ToString("c").PadRight(15) +  this.MaxOccupancy;
         }
     }
 }

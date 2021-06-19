@@ -26,7 +26,8 @@ namespace Capstone.DAL
             "FROM venue v " +
             "JOIN city c on v.city_id = c.id " +
             "JOIN state s on c.state_abbreviation = s.abbreviation " +
-            "GROUP BY v.id, v.name, v.description, c.name, s.name";
+            "GROUP BY v.id, v.name, v.description, c.name, s.name " +
+            "ORDER BY v.name";
 
         private const string SqlGetcategories =
             "SELECT c.name from category c " +

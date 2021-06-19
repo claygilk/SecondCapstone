@@ -12,7 +12,7 @@ namespace Capstone
     {
         public static int GetInteger(string message)
         {
-            string userInput = message;
+            string userInput;
             int intValue;
             int numberOfAttempts = 0;
 
@@ -21,8 +21,9 @@ namespace Capstone
                 if (numberOfAttempts > 0)
                 {
                     Console.WriteLine("Invalid input format. Please try again");
-                    userInput = Console.ReadLine();
                 }
+                Console.Write(message + " ");
+                userInput = Console.ReadLine();
 
                 numberOfAttempts++;
             }

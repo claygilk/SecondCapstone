@@ -14,7 +14,6 @@ namespace Capstone.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string ReservedFor { get; set; }
-
         public decimal TotalCost { get; set; }
     }
 
