@@ -377,7 +377,7 @@ namespace Capstone
 
         public void DisplaySpaceForReservation(Space space)
         {
-            Console.WriteLine($"{space.Id} {space.Name} {space.DailyRate.ToString("c")} {space.MaxOccupancy} {space.IsAccessible} {space.EstimatedCost.ToString("c")}");
+            Console.WriteLine($"{space.Id} {space.Name} {space.DailyRate.ToString("c")} {space.MaxOccupancy} {space.DisplayAccessability} {space.EstimatedCost.ToString("c")}");
         }
 
         public void DisplayReservation(Reservation reservation)

@@ -10,6 +10,21 @@ namespace Capstone.Models
         public int VenueId { get; set; }
         public string Name { get; set; }
         public bool IsAccessible { get; set; }
+
+        public string DisplayAccessability
+        {
+            get
+            {
+                if (this.IsAccessible)
+                {
+                    return "Yes";
+                }
+                else
+                {
+                    return "No";
+                }
+            }
+        }
         public DateTime? OpenFrom { get; set; }
         public DateTime? OpenTo { get; set; }
         public decimal DailyRate { get; set; }
