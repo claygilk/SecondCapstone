@@ -17,6 +17,8 @@ namespace Capstone.DAL
 
         private const string SqlGetLastReservation = "SELECT * FROM reservation WHERE reservation_id = @reservationId";
 
+        private const string SqlGetMaxOccupancy = "SELECT max_occupancy FROM space s WHERE s.id = @spaceId";
+
         public ReservationDAO(string connectionString)
         {
             this.connectionString = connectionString;
@@ -27,50 +29,61 @@ namespace Capstone.DAL
         // SELECT @@IDENTITY
         public int MakeReservation(Reservation newReservation)
         {
+
+
             try
             {
-                using(SqlConnection conn = new SqlConnection(this.connectionString)) 
+                if (ValidPartySize(newReservation))
                 {
-                    conn.Open();
+                    using (SqlConnection conn = new SqlConnection(this.connectionString))
+                    {
+                        conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlMakeReservation, conn);
+                        SqlCommand command = new SqlCommand(SqlMakeReservation, conn);
 
-                    Reservation reservation = new Reservation();
-                    command.Parameters.AddWithValue("@spaceId", newReservation.SpaceID);
-                    command.Parameters.AddWithValue("@attendees", newReservation.NumberOfAttendes);
-                    command.Parameters.AddWithValue("@StartDate", newReservation.StartDate);
-                    command.Parameters.AddWithValue("@EndDate", newReservation.EndDate);
-                    command.Parameters.AddWithValue("@customerName", newReservation.ReservedFor);
+                        command.Parameters.AddWithValue("@spaceId", newReservation.SpaceID);
+                        command.Parameters.AddWithValue("@attendees", newReservation.NumberOfAttendes);
+                        command.Parameters.AddWithValue("@StartDate", newReservation.StartDate);
+                        command.Parameters.AddWithValue("@EndDate", newReservation.EndDate);
+                        command.Parameters.AddWithValue("@customerName", newReservation.ReservedFor);
 
-                    newReservation.ReservationID = Convert.ToInt32(command.ExecuteScalar());
+                        newReservation.ReservationID = Convert.ToInt32(command.ExecuteScalar());
+                    }
                 }
+
             }
             catch (SqlException ex)
             {
-
                 Console.WriteLine("could not make reservation"); ;
             }
             return newReservation.ReservationID;
         }
 
-        public Reservation GetLastReservation(int reservationID)
+        public bool ValidPartySize(Reservation newReservation)
         {
-            Reservation reservation = new Reservation();
             try
             {
-                using(SqlConnection conn = new SqlConnection(this.connectionString)) 
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlGetLastReservation);
+                    SqlCommand command = new SqlCommand(SqlGetMaxOccupancy, conn);
+                    command.Parameters.AddWithValue("@spaceId", newReservation.SpaceID);
+
+                    int maxOccupancy = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (maxOccupancy >= newReservation.NumberOfAttendes)
+                    {
+                        return true;
+                    }
                 }
             }
             catch (SqlException ex)
             {
-
-                Console.WriteLine("No record of that reservation"); ;
+                Console.WriteLine("could not make reservation"); ;
             }
-            return reservation;
+
+            return false;
         }
 
         // BONUS
