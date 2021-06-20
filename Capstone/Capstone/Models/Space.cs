@@ -41,9 +41,42 @@ namespace Capstone.Models
         {
             if (this.OpenFrom.HasValue && this.OpenTo.HasValue)
             {
-                return this.Name.PadRight(25) + this.OpenFrom.Value.Month.ToString().PadRight(10) + this.OpenTo.Value.Month.ToString().PadRight(10) + this.DailyRate.ToString("c").PadRight(15) +  this.MaxOccupancy;
+                return this.Name.PadRight(25) + MonthAbbreviation(this.OpenFrom.Value.Month).PadRight(10) + MonthAbbreviation(this.OpenTo.Value.Month).PadRight(10) + this.DailyRate.ToString("c").PadRight(15) + this.MaxOccupancy;
             }
-            return this.Name.PadRight(25)+ "NA".PadRight(10) + "NA".PadRight(10) + this.DailyRate.ToString("c").PadRight(15) +  this.MaxOccupancy;
+            return this.Name.PadRight(25) + "NA".PadRight(10) + "NA".PadRight(10) + this.DailyRate.ToString("c").PadRight(15) + this.MaxOccupancy;
+        }
+
+        public string MonthAbbreviation(int month)
+        {
+            switch (month)
+            {
+                case 1:
+                    return "Jan.";
+                case 2:
+                    return "Feb.";
+                case 3:
+                    return "Mar.";
+                case 4:
+                    return "Apr.";
+                case 5:
+                    return "May";
+                case 6:
+                    return "Jun.";
+                case 7:
+                    return "Jul.";
+                case 8:
+                    return "Aug.";
+                case 9:
+                    return "Sep.";
+                case 10:
+                    return "Oct.";
+                case 11:
+                    return "Nov.";
+                case 12:
+                    return "Dec.";
+                default:
+                    return "NA";
+            }
         }
     }
 }
