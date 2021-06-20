@@ -39,6 +39,10 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Returns a list of all venues in the database
+        /// </summary>
+        /// <returns></returns>
         public List<Venue> GetAllVenues()
         {
             List<Venue> venues = new List<Venue>();
@@ -71,6 +75,12 @@ namespace Capstone.DAL
             return venues;
         }
 
+        /// <summary>
+        /// Queries the database to return a single venue selected by the user. Converts city id and state appreviation 
+        /// to city name and state name
+        /// </summary>
+        /// <param name="venueID"></param>
+        /// <returns>An intitalized venue object</returns>
         public Venue SelectVenues(int venueID)
         {
             Venue venue = new Venue();
@@ -102,18 +112,28 @@ namespace Capstone.DAL
             }
             return venue;
         }
+
+        /// <summary>
+        /// This Method queries the database to return the list of categories the venue belongs to
+        /// </summary>
+        /// <param name="venueId"></param>
+        /// <returns>A list of strings. Each string is a category name</returns>
         public List<string> GetCategoriesForVenue(int venueId)
         {
+            // Create empty list of strings to be populated by later
             List<string> categories = new List<string>();
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
 
+                    // Returns the name of each category for the given venue
                     SqlCommand command = new SqlCommand(SqlGetcategories, conn);
                     command.Parameters.AddWithValue("@venueId", venueId);
 
+                    // read thru each row and store each category name as a string and add it to the list
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
@@ -123,7 +143,6 @@ namespace Capstone.DAL
             }
             catch (SqlException ex)
             {
-
                 Console.WriteLine("Could not get categories" + ex.Message);
             }
             return categories;
